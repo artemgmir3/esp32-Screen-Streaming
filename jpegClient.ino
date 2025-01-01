@@ -10,8 +10,8 @@
 TFT_eSPI tft = TFT_eSPI();
 WiFiClient client;
 JPEGDEC jpeg;
-const char* SSID = "MIWIFI";
-const char* PASSWORD = "25041978";
+const char* SSID = "";
+const char* PASSWORD = "";
 const int PORT = 5451;
 const char* HOST = "192.168.1.120"; // host ip address 
 const int bufferSize = 50000; // buffer can be smaller as each frame is only around 3.5kb at 50 jpeg quality
