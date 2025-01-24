@@ -1,0 +1,46 @@
+name: Build Visual Studio Project
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  SOLUTION_FILE_PATH: ConsoleApplication1.sln  # Укажите имя вашего .sln файла
+  BUILD_CONFIGURATION: Release
+  BUILD_PLATFORM: Any CPU
+
+jobs:
+  build:
+    name: Build Solution
+    runs-on: windows-latest  # Требуется Windows для сборки проектов VS
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v1
+
+    # Опционально: Установка .NET SDK если требуется
+    - name: Setup .NET SDK
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: | 
+          6.0.x
+          7.0.x
+
+    - name: Restore NuGet Packages
+      run: nuget restore $env:SOLUTION_FILE_PATH
+
+    - name: Build Solution
+      run: msbuild $env:SOLUTION_FILE_PATH /p:Configuration=$env:BUILD_CONFIGURATION /p:Platform="$env:BUILD_PLATFORM" /p:RestorePackages=false
+
+    # Опционально: Загрузка артефактов сборки
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v3
+      if: success()
+      with:
+        name: build-output
+        path: ${{ github.workspace }}/**/bin/${{ env.BUILD_CONFIGURATION }}/**/*
